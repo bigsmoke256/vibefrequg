@@ -184,10 +184,21 @@ export const setStoryFlags = createServerFn({ method: "POST" })
         .parse(data),
   )
   .handler(async ({ data, context }) => {
-    const { id, ...flags } = data;
+    const { id } = data;
+    const flags: {
+      is_hero?: boolean;
+      hero_position?: number | null;
+      is_editors_pick?: boolean;
+      is_voice?: boolean;
+    } = {};
+    if (data.is_hero !== undefined) flags.is_hero = data.is_hero;
+    if (data.hero_position !== undefined) flags.hero_position = data.hero_position;
+    if (data.is_editors_pick !== undefined) flags.is_editors_pick = data.is_editors_pick;
+    if (data.is_voice !== undefined) flags.is_voice = data.is_voice;
     const { data: row, error } = await context.supabase
       .from("stories")
       .update(flags)
+
       .eq("id", id)
       .select("id,is_hero,hero_position,is_editors_pick,is_voice")
       .maybeSingle();
