@@ -114,11 +114,9 @@ export const stories: Story[] = [
   },
 ];
 
-export const editorsPicks: Story[] = [
-  stories[0],
-  stories[2],
-  stories[4],
-];
+export const editorsPicks: Story[] = stories.filter((s) =>
+  ["rema-global-tour", "streetwear-brands-2025", "ai-tools-creators"].includes(s.id),
+);
 
 export const editorsFeatureStory: Story & { featureImage: string } = {
   id: "afrobeats-global-charts",
