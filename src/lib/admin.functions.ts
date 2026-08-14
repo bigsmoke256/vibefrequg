@@ -119,11 +119,11 @@ export const saveStory = createServerFn({ method: "POST" })
     };
 
     if (data.id) {
-      const update: Record<string, unknown> = { ...payload };
-      if (data.status) update["status"] = data.status;
+      const update = data.status ? { ...payload, status: data.status } : payload;
       const { data: row, error } = await supabase
         .from("stories")
         .update(update)
+
         .eq("id", data.id)
         .select("id,slug,status")
         .maybeSingle();
