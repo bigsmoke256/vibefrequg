@@ -17,6 +17,7 @@ import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminDashboardRouteImport } from './routes/_authenticated/admin.dashboard'
 import { Route as AuthenticatedAdminStoriesIndexRouteImport } from './routes/_authenticated/admin.stories.index'
+import { Route as AuthenticatedAdminStoriesNewRouteImport } from './routes/_authenticated/admin.stories.new'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -59,6 +60,12 @@ const AuthenticatedAdminStoriesIndexRoute =
     path: '/stories/',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminStoriesNewRoute =
+  AuthenticatedAdminStoriesNewRouteImport.update({
+    id: '/stories/new',
+    path: '/stories/new',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -67,6 +74,7 @@ export interface FileRoutesByFullPath {
   '/category/$slug': typeof CategorySlugRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/admin/stories/new': typeof AuthenticatedAdminStoriesNewRoute
   '/admin/stories/': typeof AuthenticatedAdminStoriesIndexRoute
 }
 export interface FileRoutesByTo {
@@ -75,6 +83,7 @@ export interface FileRoutesByTo {
   '/category/$slug': typeof CategorySlugRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/admin/stories/new': typeof AuthenticatedAdminStoriesNewRoute
   '/admin/stories': typeof AuthenticatedAdminStoriesIndexRoute
 }
 export interface FileRoutesById {
@@ -86,6 +95,7 @@ export interface FileRoutesById {
   '/category/$slug': typeof CategorySlugRoute
   '/_authenticated/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/admin/stories/new': typeof AuthenticatedAdminStoriesNewRoute
   '/_authenticated/admin/stories/': typeof AuthenticatedAdminStoriesIndexRoute
 }
 export interface FileRouteTypes {
@@ -97,6 +107,7 @@ export interface FileRouteTypes {
     | '/category/$slug'
     | '/admin/dashboard'
     | '/admin/'
+    | '/admin/stories/new'
     | '/admin/stories/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -105,6 +116,7 @@ export interface FileRouteTypes {
     | '/category/$slug'
     | '/admin/dashboard'
     | '/admin'
+    | '/admin/stories/new'
     | '/admin/stories'
   id:
     | '__root__'
@@ -115,6 +127,7 @@ export interface FileRouteTypes {
     | '/category/$slug'
     | '/_authenticated/admin/dashboard'
     | '/_authenticated/admin/'
+    | '/_authenticated/admin/stories/new'
     | '/_authenticated/admin/stories/'
   fileRoutesById: FileRoutesById
 }
@@ -183,18 +196,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminStoriesIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/stories/new': {
+      id: '/_authenticated/admin/stories/new'
+      path: '/stories/new'
+      fullPath: '/admin/stories/new'
+      preLoaderRoute: typeof AuthenticatedAdminStoriesNewRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
   }
 }
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminDashboardRoute: typeof AuthenticatedAdminDashboardRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+  AuthenticatedAdminStoriesNewRoute: typeof AuthenticatedAdminStoriesNewRoute
   AuthenticatedAdminStoriesIndexRoute: typeof AuthenticatedAdminStoriesIndexRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminDashboardRoute: AuthenticatedAdminDashboardRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+  AuthenticatedAdminStoriesNewRoute: AuthenticatedAdminStoriesNewRoute,
   AuthenticatedAdminStoriesIndexRoute: AuthenticatedAdminStoriesIndexRoute,
 }
 
