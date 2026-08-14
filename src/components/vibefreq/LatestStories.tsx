@@ -1,15 +1,23 @@
 import { useRef, useState } from "react";
-import { categories, stories, type Category } from "@/data/stories";
+import type { StoryCardDTO } from "@/lib/story-types";
+import { CATEGORY_NAMES } from "@/lib/categories";
 import { SectionLabel } from "./SectionLabel";
 import { StoryCard } from "./StoryCard";
 import { ArrowButton } from "./ArrowButton";
 
-export function LatestStories() {
-  const [active, setActive] = useState<"All" | Category>("All");
+export function LatestStories({
+  stories,
+  categories,
+}: {
+  stories: StoryCardDTO[];
+  categories?: string[];
+}) {
+  const [active, setActive] = useState("All");
   const trackRef = useRef<HTMLDivElement>(null);
+  const tabs = ["All", ...(categories?.length ? categories : [...CATEGORY_NAMES])];
 
   const list =
-    active === "All" ? stories : stories.filter((s) => s.category === active);
+    active === "All" ? stories : stories.filter((s) => s.category?.name === active);
 
   const scrollBy = (dir: number) => {
     const el = trackRef.current;
@@ -23,10 +31,10 @@ export function LatestStories() {
         <div className="flex flex-wrap items-center gap-6">
           <SectionLabel>Latest Stories</SectionLabel>
           <div className="flex flex-wrap items-center gap-5 text-xs font-bold tracking-[0.16em] uppercase">
-            {(["All", ...categories] as const).map((c) => (
+            {tabs.map((c) => (
               <button
                 key={c}
-                onClick={() => setActive(c as "All" | Category)}
+                onClick={() => setActive(c)}
                 className={
                   active === c
                     ? "border-b-2 border-accent pb-1 text-accent"
@@ -39,24 +47,33 @@ export function LatestStories() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <ArrowButton direction="left" label="Previous stories" variant="muted" onClick={() => scrollBy(-1)} />
+          <ArrowButton
+            direction="left"
+            label="Previous stories"
+            variant="muted"
+            onClick={() => scrollBy(-1)}
+          />
           <ArrowButton direction="right" label="Next stories" onClick={() => scrollBy(1)} />
         </div>
       </div>
 
-      <div
-        ref={trackRef}
-        className="no-scrollbar mt-5 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2"
-      >
-        {list.map((s) => (
-          <StoryCard
-            key={s.id}
-            story={s}
-            aspect="aspect-[3/4]"
-            className="w-[78vw] shrink-0 snap-start sm:w-[46vw] lg:w-[calc((100%-4rem)/5)]"
-          />
-        ))}
-      </div>
+      {list.length ? (
+        <div
+          ref={trackRef}
+          className="no-scrollbar mt-5 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2"
+        >
+          {list.map((s) => (
+            <StoryCard
+              key={s.id}
+              story={s}
+              aspect="aspect-[3/4]"
+              className="w-[78vw] shrink-0 snap-start sm:w-[46vw] lg:w-[calc((100%-4rem)/5)]"
+            />
+          ))}
+        </div>
+      ) : (
+        <p className="mt-6 text-sm text-muted-foreground">No stories in this category yet.</p>
+      )}
     </section>
   );
 }
