@@ -18,6 +18,7 @@ import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminDashboardRouteImport } from './routes/_authenticated/admin.dashboard'
 import { Route as AuthenticatedAdminStoriesIndexRouteImport } from './routes/_authenticated/admin.stories.index'
 import { Route as AuthenticatedAdminStoriesNewRouteImport } from './routes/_authenticated/admin.stories.new'
+import { Route as AuthenticatedAdminStoriesIdEditRouteImport } from './routes/_authenticated/admin.stories.$id.edit'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -66,6 +67,12 @@ const AuthenticatedAdminStoriesNewRoute =
     path: '/stories/new',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminStoriesIdEditRoute =
+  AuthenticatedAdminStoriesIdEditRouteImport.update({
+    id: '/stories/$id/edit',
+    path: '/stories/$id/edit',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -76,6 +83,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/stories/new': typeof AuthenticatedAdminStoriesNewRoute
   '/admin/stories/': typeof AuthenticatedAdminStoriesIndexRoute
+  '/admin/stories/$id/edit': typeof AuthenticatedAdminStoriesIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -85,6 +93,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/stories/new': typeof AuthenticatedAdminStoriesNewRoute
   '/admin/stories': typeof AuthenticatedAdminStoriesIndexRoute
+  '/admin/stories/$id/edit': typeof AuthenticatedAdminStoriesIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -97,6 +106,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/stories/new': typeof AuthenticatedAdminStoriesNewRoute
   '/_authenticated/admin/stories/': typeof AuthenticatedAdminStoriesIndexRoute
+  '/_authenticated/admin/stories/$id/edit': typeof AuthenticatedAdminStoriesIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -109,6 +119,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/admin/stories/new'
     | '/admin/stories/'
+    | '/admin/stories/$id/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -118,6 +129,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/admin/stories/new'
     | '/admin/stories'
+    | '/admin/stories/$id/edit'
   id:
     | '__root__'
     | '/'
@@ -129,6 +141,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/'
     | '/_authenticated/admin/stories/new'
     | '/_authenticated/admin/stories/'
+    | '/_authenticated/admin/stories/$id/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -203,6 +216,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminStoriesNewRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/stories/$id/edit': {
+      id: '/_authenticated/admin/stories/$id/edit'
+      path: '/stories/$id/edit'
+      fullPath: '/admin/stories/$id/edit'
+      preLoaderRoute: typeof AuthenticatedAdminStoriesIdEditRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
   }
 }
 
@@ -211,6 +231,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminStoriesNewRoute: typeof AuthenticatedAdminStoriesNewRoute
   AuthenticatedAdminStoriesIndexRoute: typeof AuthenticatedAdminStoriesIndexRoute
+  AuthenticatedAdminStoriesIdEditRoute: typeof AuthenticatedAdminStoriesIdEditRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
@@ -218,6 +239,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   AuthenticatedAdminStoriesNewRoute: AuthenticatedAdminStoriesNewRoute,
   AuthenticatedAdminStoriesIndexRoute: AuthenticatedAdminStoriesIndexRoute,
+  AuthenticatedAdminStoriesIdEditRoute: AuthenticatedAdminStoriesIdEditRoute,
 }
 
 const AuthenticatedAdminRouteWithChildren =
