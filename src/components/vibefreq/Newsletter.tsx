@@ -76,9 +76,10 @@ export function Newsletter() {
               />
               <button
                 type="submit"
-                className="bg-accent px-7 py-3.5 text-xs font-bold tracking-[0.18em] text-accent-foreground uppercase transition-opacity hover:opacity-90"
+                disabled={busy}
+                className="bg-accent px-7 py-3.5 text-xs font-bold tracking-[0.18em] text-accent-foreground uppercase transition-opacity hover:opacity-90 disabled:opacity-60"
               >
-                Subscribe
+                {busy ? "Sending…" : "Subscribe"}
               </button>
             </div>
             <p
