@@ -11,7 +11,7 @@ export function EditorsPickStrip({
   picks: StoryCardDTO[];
   trending: StoryCardDTO[];
 }) {
-  if (!picks.length && !trending.length) return null;
+  if (!picks?.length && !trending?.length) return null;
 
   return (
     <section className="mx-auto max-w-[1500px] px-4 py-12 sm:px-6">
