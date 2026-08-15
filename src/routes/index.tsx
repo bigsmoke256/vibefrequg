@@ -43,7 +43,10 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const { data } = useSuspenseQuery(homepageQuery);
-  const stories = data.stories;
+  const stories = data?.stories ?? [];
+  const trending = data?.trending ?? [];
+  const categories = data?.categories ?? [];
+
 
   const heroStories = stories
     .filter((s) => s.is_hero)
@@ -62,11 +65,12 @@ function Index() {
       <Header />
       <main>
         <Hero stories={heroList} />
-        <EditorsPickStrip picks={picks} trending={data.trending} />
+        <EditorsPickStrip picks={picks} trending={trending} />
         <LatestStories
           stories={latest.length ? latest : stories}
-          categories={data.categories.map((c) => c.name)}
+          categories={categories.map((c) => c.name)}
         />
+
         <section className="mx-auto max-w-[1500px] px-4 pb-12 sm:px-6">
           <div className="grid gap-4 lg:grid-cols-2">
             <Voices voices={voices} />
@@ -76,7 +80,7 @@ function Index() {
         <Newsletter />
       </main>
       <Footer />
-      <TrendingTicker trending={data.trending} />
+      <TrendingTicker trending={trending} />
     </div>
   );
 }
