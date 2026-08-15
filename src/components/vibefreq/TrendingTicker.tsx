@@ -3,7 +3,7 @@ import type { StoryCardDTO } from "@/lib/story-types";
 import { Waveform } from "./Waveform";
 
 export function TrendingTicker({ trending }: { trending: StoryCardDTO[] }) {
-  if (!trending.length) return null;
+  if (!trending?.length) return null;
 
   return (
     <div className="border-t border-border/60 bg-background">

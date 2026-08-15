@@ -18,7 +18,7 @@ export function EditorsPickStrip({
       <SectionLabel>Editor's Pick</SectionLabel>
       <div className="mt-5 grid gap-4 lg:grid-cols-[1fr_320px]">
         <div className="grid gap-4 sm:grid-cols-3">
-          {picks.slice(0, 3).map((s) => (
+          {(picks ?? []).slice(0, 3).map((s) => (
             <StoryCard key={s.id} story={s} aspect="aspect-[4/3]" showMeta={false} />
           ))}
         </div>
@@ -34,7 +34,7 @@ export function EditorsPickStrip({
             </a>
           </div>
           <ul className="mt-4 grid gap-4">
-            {trending.slice(0, 3).map((s, i) => (
+            {(trending ?? []).slice(0, 3).map((s, i) => (
               <li key={s.id}>
                 <Link to="/story/$slug" params={{ slug: s.slug }} className="flex items-center gap-3">
                   <span className="text-xl text-accent">0{i + 1}</span>

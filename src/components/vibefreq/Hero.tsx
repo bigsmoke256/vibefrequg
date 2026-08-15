@@ -6,7 +6,7 @@ import { Waveform, BrandMark } from "./Waveform";
 
 export function Hero({ stories }: { stories: StoryCardDTO[] }) {
   const [index, setIndex] = useState(0);
-  const list = stories.slice(0, 4);
+  const list = (stories ?? []).slice(0, 4);
   const story = list[index] ?? list[0];
 
   if (!story) {

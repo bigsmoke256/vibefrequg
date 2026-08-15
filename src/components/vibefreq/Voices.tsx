@@ -10,8 +10,8 @@ const PER_PAGE = 3;
 
 export function Voices({ voices }: { voices: StoryCardDTO[] }) {
   const [page, setPage] = useState(0);
-  const pages = Math.max(1, Math.ceil(voices.length / PER_PAGE));
-  const current = voices.slice(page * PER_PAGE, page * PER_PAGE + PER_PAGE);
+  const pages = Math.max(1, Math.ceil((voices ?? []).length / PER_PAGE));
+  const current = (voices ?? []).slice(page * PER_PAGE, page * PER_PAGE + PER_PAGE);
 
   return (
     <div className="flex h-full flex-col border border-border/60 bg-card/50 p-5 sm:p-6">

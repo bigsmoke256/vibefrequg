@@ -80,7 +80,7 @@ function Index() {
         <Newsletter />
       </main>
       <Footer />
-      <TrendingTicker trending={data.trending} />
+      <TrendingTicker trending={trending} />
     </div>
   );
 }

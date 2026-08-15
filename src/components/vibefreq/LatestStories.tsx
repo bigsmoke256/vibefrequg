@@ -17,7 +17,7 @@ export function LatestStories({
   const tabs = ["All", ...(categories?.length ? categories : [...CATEGORY_NAMES])];
 
   const list =
-    active === "All" ? stories : stories.filter((s) => s.category?.name === active);
+    active === "All" ? (stories ?? []) : (stories ?? []).filter((s) => s.category?.name === active);
 
   const scrollBy = (dir: number) => {
     const el = trackRef.current;
