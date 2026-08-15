@@ -29,7 +29,7 @@ function AdminLayout() {
   const links = [
     { to: "/admin/dashboard", label: "Dashboard" },
     { to: "/admin/stories", label: "Stories" },
-    { to: "/admin/review", label: "Review Queue" },
+    ...(data?.isEditorial ? ([{ to: "/admin/review", label: "Review Queue" }] as const) : []),
   ] as const;
 
   return (

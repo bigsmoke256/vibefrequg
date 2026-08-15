@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Search, Send, Menu, X, Instagram, Youtube } from "lucide-react";
 import { Logo } from "./Logo";
-import { categories, categorySlug } from "@/data/stories";
+import { CATEGORY_NAMES as categories, categorySlug } from "@/lib/categories";
 
 export function Header() {
   const [open, setOpen] = useState(false);
