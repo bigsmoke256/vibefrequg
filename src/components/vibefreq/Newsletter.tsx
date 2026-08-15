@@ -1,32 +1,42 @@
 import { useState } from "react";
 import { Mail, Lock } from "lucide-react";
 import { z } from "zod";
+import { useServerFn } from "@tanstack/react-start";
+import { subscribeToNewsletter } from "@/lib/stories.functions";
 
 const schema = z.string().trim().email().max(255);
 
 export function Newsletter() {
   const [email, setEmail] = useState("");
+  const [busy, setBusy] = useState(false);
   const [state, setState] = useState<{
     kind: "idle" | "error" | "success";
     message: string;
   }>({ kind: "idle", message: "" });
-  const [subscribed, setSubscribed] = useState<string[]>([]);
+  const subscribe = useServerFn(subscribeToNewsletter);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     const parsed = schema.safeParse(email);
     if (!parsed.success) {
       setState({ kind: "error", message: "Enter a valid email address." });
       return;
     }
-    const value = parsed.data.toLowerCase();
-    if (subscribed.includes(value)) {
-      setState({ kind: "error", message: "You're already on the list." });
-      return;
+    setBusy(true);
+    try {
+      const result = await subscribe({
+        data: { email: parsed.data.toLowerCase(), source: "homepage" },
+      });
+      setState({
+        kind: result.ok ? "success" : "error",
+        message: result.message ?? "",
+      });
+      if (result.ok) setEmail("");
+    } catch {
+      setState({ kind: "error", message: "Something went wrong. Try again." });
+    } finally {
+      setBusy(false);
     }
-    setSubscribed((s) => [...s, value]);
-    setState({ kind: "success", message: "You're in. Welcome to the frequency." });
-    setEmail("");
   };
 
   return (
