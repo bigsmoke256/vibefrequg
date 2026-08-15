@@ -65,11 +65,12 @@ function Index() {
       <Header />
       <main>
         <Hero stories={heroList} />
-        <EditorsPickStrip picks={picks} trending={data.trending} />
+        <EditorsPickStrip picks={picks} trending={trending} />
         <LatestStories
           stories={latest.length ? latest : stories}
-          categories={data.categories.map((c) => c.name)}
+          categories={categories.map((c) => c.name)}
         />
+
         <section className="mx-auto max-w-[1500px] px-4 pb-12 sm:px-6">
           <div className="grid gap-4 lg:grid-cols-2">
             <Voices voices={voices} />
