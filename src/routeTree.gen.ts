@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
+import { Route as StorySlugRouteImport } from './routes/story.$slug'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminDashboardRouteImport } from './routes/_authenticated/admin.dashboard'
 import { Route as AuthenticatedAdminReviewRouteImport } from './routes/_authenticated/admin.review'
@@ -43,6 +44,11 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
 const CategorySlugRoute = CategorySlugRouteImport.update({
   id: '/category/$slug',
   path: '/category/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StorySlugRoute = StorySlugRouteImport.update({
+  id: '/story/$slug',
+  path: '/story/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
@@ -86,6 +92,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/category/$slug': typeof CategorySlugRoute
+  '/story/$slug': typeof StorySlugRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/admin/review': typeof AuthenticatedAdminReviewRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
@@ -97,6 +104,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/category/$slug': typeof CategorySlugRoute
+  '/story/$slug': typeof StorySlugRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/admin/review': typeof AuthenticatedAdminReviewRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
@@ -111,6 +119,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/category/$slug': typeof CategorySlugRoute
+  '/story/$slug': typeof StorySlugRoute
   '/_authenticated/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/_authenticated/admin/review': typeof AuthenticatedAdminReviewRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
@@ -125,6 +134,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/admin'
     | '/category/$slug'
+    | '/story/$slug'
     | '/admin/dashboard'
     | '/admin/review'
     | '/admin/'
@@ -136,6 +146,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/category/$slug'
+    | '/story/$slug'
     | '/admin/dashboard'
     | '/admin/review'
     | '/admin'
@@ -149,6 +160,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/_authenticated/admin'
     | '/category/$slug'
+    | '/story/$slug'
     | '/_authenticated/admin/dashboard'
     | '/_authenticated/admin/review'
     | '/_authenticated/admin/'
@@ -162,6 +174,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   CategorySlugRoute: typeof CategorySlugRoute
+  StorySlugRoute: typeof StorySlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -199,6 +212,13 @@ declare module '@tanstack/react-router' {
       path: '/category/$slug'
       fullPath: '/category/$slug'
       preLoaderRoute: typeof CategorySlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/story/$slug': {
+      id: '/story/$slug'
+      path: '/story/$slug'
+      fullPath: '/story/$slug'
+      preLoaderRoute: typeof StorySlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin/': {
@@ -283,6 +303,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   CategorySlugRoute: CategorySlugRoute,
+  StorySlugRoute: StorySlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
