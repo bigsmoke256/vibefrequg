@@ -43,7 +43,10 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const { data } = useSuspenseQuery(homepageQuery);
-  const stories = data.stories;
+  const stories = data?.stories ?? [];
+  const trending = data?.trending ?? [];
+  const categories = data?.categories ?? [];
+
 
   const heroStories = stories
     .filter((s) => s.is_hero)
