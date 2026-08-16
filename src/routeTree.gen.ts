@@ -20,6 +20,7 @@ import { Route as AuthenticatedAdminDashboardRouteImport } from './routes/_authe
 import { Route as AuthenticatedAdminReviewRouteImport } from './routes/_authenticated/admin.review'
 import { Route as AuthenticatedAdminStoriesIndexRouteImport } from './routes/_authenticated/admin.stories.index'
 import { Route as AuthenticatedAdminStoriesNewRouteImport } from './routes/_authenticated/admin.stories.new'
+import { Route as ApiPublicMediaSplatRouteImport } from './routes/api/public/media.$'
 import { Route as AuthenticatedAdminStoriesIdEditRouteImport } from './routes/_authenticated/admin.stories.$id.edit'
 
 const IndexRoute = IndexRouteImport.update({
@@ -80,6 +81,11 @@ const AuthenticatedAdminStoriesNewRoute =
     path: '/stories/new',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const ApiPublicMediaSplatRoute = ApiPublicMediaSplatRouteImport.update({
+  id: '/api/public/media/$',
+  path: '/api/public/media/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminStoriesIdEditRoute =
   AuthenticatedAdminStoriesIdEditRouteImport.update({
     id: '/stories/$id/edit',
@@ -97,6 +103,7 @@ export interface FileRoutesByFullPath {
   '/admin/review': typeof AuthenticatedAdminReviewRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/stories/new': typeof AuthenticatedAdminStoriesNewRoute
+  '/api/public/media/$': typeof ApiPublicMediaSplatRoute
   '/admin/stories/': typeof AuthenticatedAdminStoriesIndexRoute
   '/admin/stories/$id/edit': typeof AuthenticatedAdminStoriesIdEditRoute
 }
@@ -109,6 +116,7 @@ export interface FileRoutesByTo {
   '/admin/review': typeof AuthenticatedAdminReviewRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/stories/new': typeof AuthenticatedAdminStoriesNewRoute
+  '/api/public/media/$': typeof ApiPublicMediaSplatRoute
   '/admin/stories': typeof AuthenticatedAdminStoriesIndexRoute
   '/admin/stories/$id/edit': typeof AuthenticatedAdminStoriesIdEditRoute
 }
@@ -124,6 +132,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/review': typeof AuthenticatedAdminReviewRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/stories/new': typeof AuthenticatedAdminStoriesNewRoute
+  '/api/public/media/$': typeof ApiPublicMediaSplatRoute
   '/_authenticated/admin/stories/': typeof AuthenticatedAdminStoriesIndexRoute
   '/_authenticated/admin/stories/$id/edit': typeof AuthenticatedAdminStoriesIdEditRoute
 }
@@ -139,6 +148,7 @@ export interface FileRouteTypes {
     | '/admin/review'
     | '/admin/'
     | '/admin/stories/new'
+    | '/api/public/media/$'
     | '/admin/stories/'
     | '/admin/stories/$id/edit'
   fileRoutesByTo: FileRoutesByTo
@@ -151,6 +161,7 @@ export interface FileRouteTypes {
     | '/admin/review'
     | '/admin'
     | '/admin/stories/new'
+    | '/api/public/media/$'
     | '/admin/stories'
     | '/admin/stories/$id/edit'
   id:
@@ -165,6 +176,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/review'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/stories/new'
+    | '/api/public/media/$'
     | '/_authenticated/admin/stories/'
     | '/_authenticated/admin/stories/$id/edit'
   fileRoutesById: FileRoutesById
@@ -175,6 +187,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   CategorySlugRoute: typeof CategorySlugRoute
   StorySlugRoute: typeof StorySlugRoute
+  ApiPublicMediaSplatRoute: typeof ApiPublicMediaSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -256,6 +269,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminStoriesNewRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/api/public/media/$': {
+      id: '/api/public/media/$'
+      path: '/api/public/media/$'
+      fullPath: '/api/public/media/$'
+      preLoaderRoute: typeof ApiPublicMediaSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin/stories/$id/edit': {
       id: '/_authenticated/admin/stories/$id/edit'
       path: '/stories/$id/edit'
@@ -304,6 +324,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   CategorySlugRoute: CategorySlugRoute,
   StorySlugRoute: StorySlugRoute,
+  ApiPublicMediaSplatRoute: ApiPublicMediaSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
