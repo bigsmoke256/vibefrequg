@@ -42,7 +42,7 @@ export const listAdminStories = createServerFn({ method: "GET" })
   .handler(async ({ data, context }) => {
     let query = context.supabase
       .from("stories")
-      .select(`${CARD_SELECT},status,created_at,updated_at,created_by`)
+      .select(`${CARD_SELECT},status,created_at,updated_at,created_by,scheduled_for,corrected_at`)
       .order("updated_at", { ascending: false })
       .limit(200);
 
