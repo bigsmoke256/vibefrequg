@@ -94,6 +94,9 @@ const storyInput = z.object({
   og_image: z.string().trim().max(600).optional().nullable(),
   is_voice: z.boolean().optional(),
   status: statusEnum.optional(),
+  scheduled_for: z.string().datetime({ offset: true }).nullable().optional(),
+  correction_note: z.string().trim().max(500).nullable().optional(),
+  tagIds: z.array(z.string().uuid()).max(20).optional(),
 });
 
 export const saveStory = createServerFn({ method: "POST" })
@@ -116,10 +119,38 @@ export const saveStory = createServerFn({ method: "POST" })
       seo_description: data.seo_description ?? null,
       og_image: data.og_image ?? null,
       is_voice: data.is_voice ?? false,
+      ...(data.scheduled_for !== undefined ? { scheduled_for: data.scheduled_for } : {}),
+    };
+
+    const syncTags = async (storyId: string) => {
+      if (!data.tagIds) return;
+      await supabase.from("story_tags").delete().eq("story_id", storyId);
+      if (data.tagIds.length) {
+        await supabase
+          .from("story_tags")
+          .insert(data.tagIds.map((tag_id) => ({ story_id: storyId, tag_id })));
+      }
     };
 
     if (data.id) {
-      const update = data.status ? { ...payload, status: data.status } : payload;
+      const update: Record<string, unknown> = data.status
+        ? { ...payload, status: data.status }
+        : { ...payload };
+
+      const { data: current } = await supabase
+        .from("stories")
+        .select("status")
+        .eq("id", data.id)
+        .maybeSingle();
+
+      const note = data.correction_note?.trim();
+      if (note) {
+        update["correction_note"] = note;
+        if (current?.status === "published") update["corrected_at"] = new Date().toISOString();
+      } else if (data.correction_note === null) {
+        update["correction_note"] = null;
+      }
+
       const { data: row, error } = await supabase
         .from("stories")
         .update(update)
@@ -129,6 +160,7 @@ export const saveStory = createServerFn({ method: "POST" })
         .maybeSingle();
       if (error) return { ok: false as const, message: error.message };
       if (!row) return { ok: false as const, message: "Not allowed to edit this story." };
+      await syncTags(row.id);
       return { ok: true as const, story: row };
     }
 
@@ -149,18 +181,28 @@ export const saveStory = createServerFn({ method: "POST" })
       .select("id,slug,status")
       .maybeSingle();
     if (error) return { ok: false as const, message: error.message };
+    if (row) await syncTags(row.id);
     return { ok: true as const, story: row! };
   });
 
 export const setStoryStatus = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: { id: string; status: StoryStatus }) =>
-    z.object({ id: z.string().uuid(), status: statusEnum }).parse(data),
+  .inputValidator((data: { id: string; status: StoryStatus; scheduled_for?: string | null }) =>
+    z
+      .object({
+        id: z.string().uuid(),
+        status: statusEnum,
+        scheduled_for: z.string().datetime({ offset: true }).nullable().optional(),
+      })
+      .parse(data),
   )
   .handler(async ({ data, context }) => {
     const { data: row, error } = await context.supabase
       .from("stories")
-      .update({ status: data.status })
+      .update({
+        status: data.status,
+        ...(data.scheduled_for !== undefined ? { scheduled_for: data.scheduled_for } : {}),
+      })
       .eq("id", data.id)
       .select("id,status,slug")
       .maybeSingle();
@@ -243,4 +285,16 @@ export const getDashboardStats = createServerFn({ method: "GET" })
       .from("subscribers")
       .select("id", { count: "exact", head: true });
     return { counts, recent: recent ?? [], subscribers: subscribers ?? 0 };
+  });
+
+export const getStoryTags = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { id: string }) => z.object({ id: z.string().uuid() }).parse(data))
+  .handler(async ({ data, context }) => {
+    const { data: rows, error } = await context.supabase
+      .from("story_tags")
+      .select("tag_id")
+      .eq("story_id", data.id);
+    if (error) throw new Error(error.message);
+    return { tagIds: (rows ?? []).map((r) => r.tag_id) };
   });
