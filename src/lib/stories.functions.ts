@@ -91,3 +91,36 @@ export const subscribeToNewsletter = createServerFn({ method: "POST" })
     }
     return { ok: true, message: "You're in. Welcome to the frequency." };
   });
+
+export const getStoriesByTag = createServerFn({ method: "GET" })
+  .inputValidator((data: { slug: string }) =>
+    z.object({ slug: z.string().min(1).max(80) }).parse(data),
+  )
+  .handler(async ({ data }) => {
+    const { createPublicClient } = await import("./supabase-public.server");
+    const supabase = createPublicClient();
+
+    const { data: tag } = await supabase
+      .from("tags")
+      .select("id,name,slug")
+      .eq("slug", data.slug)
+      .maybeSingle();
+    if (!tag) return { tag: null, stories: [] as StoryCardDTO[] };
+
+    const { data: links } = await supabase
+      .from("story_tags")
+      .select("story_id")
+      .eq("tag_id", tag.id);
+    const ids = (links ?? []).map((l) => l.story_id);
+    if (!ids.length) return { tag, stories: [] as StoryCardDTO[] };
+
+    const { data: stories } = await supabase
+      .from("stories")
+      .select(CARD_SELECT)
+      .eq("status", "published")
+      .in("id", ids)
+      .order("published_at", { ascending: false })
+      .limit(60);
+
+    return { tag, stories: (stories ?? []) as unknown as StoryCardDTO[] };
+  });
