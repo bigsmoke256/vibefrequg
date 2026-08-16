@@ -139,10 +139,6 @@ export const saveStory = createServerFn({ method: "POST" })
     };
 
     if (data.id) {
-      const update: Record<string, unknown> = data.status
-        ? { ...payload, status: data.status }
-        : { ...payload };
-
       const { data: current } = await supabase
         .from("stories")
         .select("status")
@@ -150,12 +146,20 @@ export const saveStory = createServerFn({ method: "POST" })
         .maybeSingle();
 
       const note = data.correction_note?.trim();
-      if (note) {
-        update["correction_note"] = note;
-        if (current?.status === "published") update["corrected_at"] = new Date().toISOString();
-      } else if (data.correction_note === null) {
-        update["correction_note"] = null;
-      }
+      const update = {
+        ...payload,
+        ...(data.status ? { status: data.status } : {}),
+        ...(note
+          ? {
+              correction_note: note,
+              ...(current?.status === "published"
+                ? { corrected_at: new Date().toISOString() }
+                : {}),
+            }
+          : data.correction_note === null
+            ? { correction_note: null }
+            : {}),
+      };
 
       const { data: row, error } = await supabase
         .from("stories")
