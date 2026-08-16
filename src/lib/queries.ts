@@ -1,5 +1,8 @@
 import { queryOptions } from "@tanstack/react-query";
-import { getHomepage, getStoryBySlug } from "./stories.functions";
+import { getHomepage, getStoryBySlug, getStoriesByTag } from "./stories.functions";
+import { listMedia } from "./media.functions";
+import { listTags, listStaff } from "./newsroom.functions";
+import { getStoryTags } from "./admin.functions";
 import {
   getAdminStory,
   getDashboardStats,
