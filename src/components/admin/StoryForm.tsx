@@ -4,22 +4,11 @@ import { useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { saveStory, setStoryStatus, setStoryFlags, deleteStory } from "@/lib/admin.functions";
-import { myAccountQuery, refDataQuery } from "@/lib/queries";
+import { myAccountQuery, refDataQuery, storyTagsQuery } from "@/lib/queries";
 import { slugify, statusLabels, blocksToText } from "@/lib/story-types";
 import type { StoryFullDTO, StoryStatus } from "@/lib/story-types";
-
-const PRESET_IMAGES = [
-  "/img/story-music.jpg",
-  "/img/story-culture.jpg",
-  "/img/story-style.jpg",
-  "/img/story-tech.jpg",
-  "/img/story-entertainment.jpg",
-  "/img/editors-feature.jpg",
-  "/img/hero-portrait.jpg",
-  "/img/voice-1.jpg",
-  "/img/voice-2.jpg",
-  "/img/voice-3.jpg",
-];
+import { ImageField } from "./ImageField";
+import { TagSelector } from "./TagSelector";
 
 type Existing = StoryFullDTO & {
   category_id: string | null;
@@ -27,11 +16,23 @@ type Existing = StoryFullDTO & {
   created_by: string | null;
 };
 
+/** "2026-08-16T10:30" for datetime-local inputs. */
+function toLocalInput(iso: string | null | undefined) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
 export function StoryForm({ existing }: { existing?: Existing }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: ref } = useQuery(refDataQuery);
   const { data: me } = useQuery(myAccountQuery);
+  const { data: storyTags } = useQuery({
+    ...storyTagsQuery(existing?.id ?? ""),
+    enabled: Boolean(existing?.id),
+  });
 
   const save = useServerFn(saveStory);
   const changeStatus = useServerFn(setStoryStatus);
@@ -44,6 +45,7 @@ export function StoryForm({ existing }: { existing?: Existing }) {
   const [excerpt, setExcerpt] = useState(existing?.excerpt ?? "");
   const [bodyText, setBodyText] = useState(blocksToText(existing?.body));
   const [cover, setCover] = useState(existing?.cover_image ?? "");
+  const [ogImage, setOgImage] = useState(existing?.og_image ?? "");
   const [categoryId, setCategoryId] = useState(existing?.category_id ?? "");
   const [authorId, setAuthorId] = useState(existing?.author_id ?? "");
   const [readMinutes, setReadMinutes] = useState(existing?.read_minutes ?? 4);
@@ -53,10 +55,14 @@ export function StoryForm({ existing }: { existing?: Existing }) {
   const [isHero, setIsHero] = useState(existing?.is_hero ?? false);
   const [heroPosition, setHeroPosition] = useState(existing?.hero_position ?? 1);
   const [isPick, setIsPick] = useState(existing?.is_editors_pick ?? false);
+  const [scheduledFor, setScheduledFor] = useState(toLocalInput(existing?.scheduled_for));
+  const [correctionNote, setCorrectionNote] = useState("");
+  const [tagIds, setTagIds] = useState<string[] | null>(null);
   const [busy, setBusy] = useState(false);
 
   const status: StoryStatus = existing?.status ?? "draft";
   const id = existing?.id;
+  const effectiveTagIds = tagIds ?? storyTags?.tagIds ?? [];
 
   const buildPayload = (nextStatus?: StoryStatus) => ({
     ...(id ? { id } : {}),
@@ -65,12 +71,16 @@ export function StoryForm({ existing }: { existing?: Existing }) {
     excerpt: excerpt.trim() || null,
     bodyText,
     cover_image: cover.trim() || null,
+    og_image: ogImage.trim() || null,
     category_id: categoryId || null,
     author_id: authorId || null,
     read_minutes: Number(readMinutes) || 4,
     seo_title: seoTitle.trim() || null,
     seo_description: seoDescription.trim() || null,
     is_voice: isVoice,
+    tagIds: effectiveTagIds,
+    ...(scheduledFor ? { scheduled_for: new Date(scheduledFor).toISOString() } : {}),
+    ...(correctionNote.trim() ? { correction_note: correctionNote.trim() } : {}),
     ...(nextStatus ? { status: nextStatus } : {}),
   });
 
@@ -84,6 +94,9 @@ export function StoryForm({ existing }: { existing?: Existing }) {
       }
       await queryClient.invalidateQueries();
       toast.success(nextStatus ? `Saved as ${statusLabels[nextStatus]}` : "Saved");
+      if (correctionNote.trim() && status === "published") {
+        toast.success("Correction logged on the public article");
+      }
       if (!id && result.story) {
         navigate({ to: "/admin/stories/$id/edit", params: { id: result.story.id } });
       }
@@ -97,13 +110,23 @@ export function StoryForm({ existing }: { existing?: Existing }) {
   };
 
   const transition = async (next: StoryStatus) => {
+    if (next === "scheduled" && !scheduledFor) {
+      toast.error("Pick a date and time to schedule this story.");
+      return;
+    }
     if (!id) {
       await persist(next);
       return;
     }
     setBusy(true);
     try {
-      const result = await changeStatus({ data: { id, status: next } });
+      const result = await changeStatus({
+        data: {
+          id,
+          status: next,
+          ...(next === "scheduled" ? { scheduled_for: new Date(scheduledFor).toISOString() } : {}),
+        },
+      });
       if (!result.ok) {
         toast.error(result.message);
         return;
@@ -200,12 +223,42 @@ export function StoryForm({ existing }: { existing?: Existing }) {
             onChange={(e) => setBodyText(e.target.value)}
           />
         </div>
+
+        {status === "published" && me?.isEditorial ? (
+          <div className="grid gap-2 border border-accent/40 bg-card/40 p-4">
+            <label className={label} htmlFor="correction">
+              Correction note (optional) — this story is already live
+            </label>
+            <textarea
+              id="correction"
+              rows={2}
+              className={field}
+              placeholder="e.g. Corrected the spelling of the venue name."
+              value={correctionNote}
+              onChange={(e) => setCorrectionNote(e.target.value)}
+            />
+            <p className="text-[11px] text-muted-foreground">
+              Adding a note stamps the article with an “Updated” disclosure on the public page.
+            </p>
+            {existing?.corrected_at ? (
+              <p className="text-[11px] text-accent">
+                Last correction: {new Date(existing.corrected_at).toLocaleString()} —{" "}
+                {existing.correction_note}
+              </p>
+            ) : null}
+          </div>
+        ) : null}
       </div>
 
       <aside className="grid content-start gap-5 border border-border/60 bg-card/50 p-5">
         <div>
           <p className={label}>Status</p>
           <p className="mt-1 text-2xl text-accent uppercase">{statusLabels[status]}</p>
+          {status === "scheduled" && existing?.scheduled_for ? (
+            <p className="text-[11px] text-muted-foreground">
+              Goes live {new Date(existing.scheduled_for).toLocaleString()}
+            </p>
+          ) : null}
         </div>
 
         <div className="grid gap-2">
@@ -237,6 +290,30 @@ export function StoryForm({ existing }: { existing?: Existing }) {
               >
                 Approve &amp; publish
               </button>
+
+              <div className="grid gap-2 border-t border-border/60 pt-3">
+                <label className={label} htmlFor="scheduledFor">
+                  Scheduled for
+                </label>
+                <input
+                  id="scheduledFor"
+                  type="datetime-local"
+                  className={field}
+                  value={scheduledFor}
+                  onChange={(e) => setScheduledFor(e.target.value)}
+                />
+                <button
+                  disabled={busy}
+                  onClick={() => transition("scheduled")}
+                  className="border border-border px-4 py-2.5 text-xs font-bold tracking-[0.16em] uppercase hover:border-accent hover:text-accent disabled:opacity-60"
+                >
+                  Schedule publish
+                </button>
+                <p className="text-[11px] text-muted-foreground">
+                  A newsroom job checks every minute and publishes scheduled stories automatically.
+                </p>
+              </div>
+
               <button
                 disabled={busy}
                 onClick={() => transition("archived")}
@@ -309,35 +386,9 @@ export function StoryForm({ existing }: { existing?: Existing }) {
           </select>
         </div>
 
-        <div className="grid gap-2">
-          <label className={label} htmlFor="cover">
-            Cover image URL
-          </label>
-          <input
-            id="cover"
-            className={field}
-            value={cover}
-            placeholder="/img/story-music.jpg or https://…"
-            onChange={(e) => setCover(e.target.value)}
-          />
-          <div className="grid grid-cols-5 gap-1">
-            {PRESET_IMAGES.map((src) => (
-              <button
-                key={src}
-                type="button"
-                onClick={() => setCover(src)}
-                className={`aspect-square overflow-hidden border ${
-                  cover === src ? "border-accent" : "border-border/60"
-                }`}
-              >
-                <img src={src} alt="" className="h-full w-full object-cover" />
-              </button>
-            ))}
-          </div>
-          {cover ? (
-            <img src={cover} alt="Cover preview" className="mt-1 h-28 w-full object-cover" />
-          ) : null}
-        </div>
+        <ImageField title="Cover image" value={cover} onChange={setCover} />
+
+        <TagSelector value={effectiveTagIds} onChange={setTagIds} />
 
         <div className="grid gap-2">
           <label className={label} htmlFor="read">
@@ -407,6 +458,12 @@ export function StoryForm({ existing }: { existing?: Existing }) {
             className={field}
             value={seoDescription}
             onChange={(e) => setSeoDescription(e.target.value)}
+          />
+          <ImageField
+            title="Social share (OG) image"
+            value={ogImage}
+            onChange={setOgImage}
+            aspect="aspect-[1.91/1]"
           />
         </div>
       </aside>

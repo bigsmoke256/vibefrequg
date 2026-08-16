@@ -24,8 +24,14 @@ export type StoryCardDTO = {
   author: { name: string; slug: string; avatar: string | null } | null;
 };
 
+export type StoryTagRef = { tag: { name: string; slug: string } | null };
+
 export type StoryFullDTO = StoryCardDTO & {
   body: StoryBlock[];
+  corrected_at: string | null;
+  correction_note: string | null;
+  scheduled_for: string | null;
+  tag_links: StoryTagRef[];
   seo_title: string | null;
   seo_description: string | null;
   og_image: string | null;
@@ -35,7 +41,7 @@ export type StoryFullDTO = StoryCardDTO & {
 export const CARD_SELECT =
   "id,slug,title,excerpt,cover_image,read_minutes,view_count,is_hero,hero_position,is_editors_pick,is_voice,published_at,category:categories(name,slug),author:authors(name,slug,avatar)";
 
-export const FULL_SELECT = `${CARD_SELECT},body,seo_title,seo_description,og_image,status`;
+export const FULL_SELECT = `${CARD_SELECT},body,seo_title,seo_description,og_image,status,corrected_at,correction_note,scheduled_for,tag_links:story_tags(tag:tags(name,slug))`;
 
 export const statusLabels: Record<StoryStatus, string> = {
   draft: "Draft",

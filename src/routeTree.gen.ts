@@ -17,9 +17,11 @@ import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as StorySlugRouteImport } from './routes/story.$slug'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminDashboardRouteImport } from './routes/_authenticated/admin.dashboard'
+import { Route as AuthenticatedAdminMediaRouteImport } from './routes/_authenticated/admin.media'
 import { Route as AuthenticatedAdminReviewRouteImport } from './routes/_authenticated/admin.review'
 import { Route as AuthenticatedAdminStoriesIndexRouteImport } from './routes/_authenticated/admin.stories.index'
 import { Route as AuthenticatedAdminStoriesNewRouteImport } from './routes/_authenticated/admin.stories.new'
+import { Route as ApiPublicMediaSplatRouteImport } from './routes/api/public/media.$'
 import { Route as AuthenticatedAdminStoriesIdEditRouteImport } from './routes/_authenticated/admin.stories.$id.edit'
 
 const IndexRoute = IndexRouteImport.update({
@@ -62,6 +64,11 @@ const AuthenticatedAdminDashboardRoute =
     path: '/dashboard',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminMediaRoute = AuthenticatedAdminMediaRouteImport.update({
+  id: '/media',
+  path: '/media',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 const AuthenticatedAdminReviewRoute =
   AuthenticatedAdminReviewRouteImport.update({
     id: '/review',
@@ -80,6 +87,11 @@ const AuthenticatedAdminStoriesNewRoute =
     path: '/stories/new',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const ApiPublicMediaSplatRoute = ApiPublicMediaSplatRouteImport.update({
+  id: '/api/public/media/$',
+  path: '/api/public/media/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminStoriesIdEditRoute =
   AuthenticatedAdminStoriesIdEditRouteImport.update({
     id: '/stories/$id/edit',
@@ -94,9 +106,11 @@ export interface FileRoutesByFullPath {
   '/category/$slug': typeof CategorySlugRoute
   '/story/$slug': typeof StorySlugRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
+  '/admin/media': typeof AuthenticatedAdminMediaRoute
   '/admin/review': typeof AuthenticatedAdminReviewRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/stories/new': typeof AuthenticatedAdminStoriesNewRoute
+  '/api/public/media/$': typeof ApiPublicMediaSplatRoute
   '/admin/stories/': typeof AuthenticatedAdminStoriesIndexRoute
   '/admin/stories/$id/edit': typeof AuthenticatedAdminStoriesIdEditRoute
 }
@@ -106,9 +120,11 @@ export interface FileRoutesByTo {
   '/category/$slug': typeof CategorySlugRoute
   '/story/$slug': typeof StorySlugRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
+  '/admin/media': typeof AuthenticatedAdminMediaRoute
   '/admin/review': typeof AuthenticatedAdminReviewRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/stories/new': typeof AuthenticatedAdminStoriesNewRoute
+  '/api/public/media/$': typeof ApiPublicMediaSplatRoute
   '/admin/stories': typeof AuthenticatedAdminStoriesIndexRoute
   '/admin/stories/$id/edit': typeof AuthenticatedAdminStoriesIdEditRoute
 }
@@ -121,9 +137,11 @@ export interface FileRoutesById {
   '/category/$slug': typeof CategorySlugRoute
   '/story/$slug': typeof StorySlugRoute
   '/_authenticated/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
+  '/_authenticated/admin/media': typeof AuthenticatedAdminMediaRoute
   '/_authenticated/admin/review': typeof AuthenticatedAdminReviewRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/stories/new': typeof AuthenticatedAdminStoriesNewRoute
+  '/api/public/media/$': typeof ApiPublicMediaSplatRoute
   '/_authenticated/admin/stories/': typeof AuthenticatedAdminStoriesIndexRoute
   '/_authenticated/admin/stories/$id/edit': typeof AuthenticatedAdminStoriesIdEditRoute
 }
@@ -136,9 +154,11 @@ export interface FileRouteTypes {
     | '/category/$slug'
     | '/story/$slug'
     | '/admin/dashboard'
+    | '/admin/media'
     | '/admin/review'
     | '/admin/'
     | '/admin/stories/new'
+    | '/api/public/media/$'
     | '/admin/stories/'
     | '/admin/stories/$id/edit'
   fileRoutesByTo: FileRoutesByTo
@@ -148,9 +168,11 @@ export interface FileRouteTypes {
     | '/category/$slug'
     | '/story/$slug'
     | '/admin/dashboard'
+    | '/admin/media'
     | '/admin/review'
     | '/admin'
     | '/admin/stories/new'
+    | '/api/public/media/$'
     | '/admin/stories'
     | '/admin/stories/$id/edit'
   id:
@@ -162,9 +184,11 @@ export interface FileRouteTypes {
     | '/category/$slug'
     | '/story/$slug'
     | '/_authenticated/admin/dashboard'
+    | '/_authenticated/admin/media'
     | '/_authenticated/admin/review'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/stories/new'
+    | '/api/public/media/$'
     | '/_authenticated/admin/stories/'
     | '/_authenticated/admin/stories/$id/edit'
   fileRoutesById: FileRoutesById
@@ -175,6 +199,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   CategorySlugRoute: typeof CategorySlugRoute
   StorySlugRoute: typeof StorySlugRoute
+  ApiPublicMediaSplatRoute: typeof ApiPublicMediaSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -235,6 +260,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminDashboardRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/media': {
+      id: '/_authenticated/admin/media'
+      path: '/media'
+      fullPath: '/admin/media'
+      preLoaderRoute: typeof AuthenticatedAdminMediaRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/review': {
       id: '/_authenticated/admin/review'
       path: '/review'
@@ -256,6 +288,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminStoriesNewRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/api/public/media/$': {
+      id: '/api/public/media/$'
+      path: '/api/public/media/$'
+      fullPath: '/api/public/media/$'
+      preLoaderRoute: typeof ApiPublicMediaSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin/stories/$id/edit': {
       id: '/_authenticated/admin/stories/$id/edit'
       path: '/stories/$id/edit'
@@ -268,6 +307,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminDashboardRoute: typeof AuthenticatedAdminDashboardRoute
+  AuthenticatedAdminMediaRoute: typeof AuthenticatedAdminMediaRoute
   AuthenticatedAdminReviewRoute: typeof AuthenticatedAdminReviewRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminStoriesNewRoute: typeof AuthenticatedAdminStoriesNewRoute
@@ -277,6 +317,7 @@ interface AuthenticatedAdminRouteChildren {
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminDashboardRoute: AuthenticatedAdminDashboardRoute,
+  AuthenticatedAdminMediaRoute: AuthenticatedAdminMediaRoute,
   AuthenticatedAdminReviewRoute: AuthenticatedAdminReviewRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   AuthenticatedAdminStoriesNewRoute: AuthenticatedAdminStoriesNewRoute,
@@ -304,6 +345,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   CategorySlugRoute: CategorySlugRoute,
   StorySlugRoute: StorySlugRoute,
+  ApiPublicMediaSplatRoute: ApiPublicMediaSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

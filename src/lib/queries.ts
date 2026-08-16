@@ -1,5 +1,8 @@
 import { queryOptions } from "@tanstack/react-query";
-import { getHomepage, getStoryBySlug } from "./stories.functions";
+import { getHomepage, getStoryBySlug, getStoriesByTag } from "./stories.functions";
+import { listMedia } from "./media.functions";
+import { listTags, listStaff } from "./newsroom.functions";
+import { getStoryTags } from "./admin.functions";
 import {
   getAdminStory,
   getDashboardStats,
@@ -51,3 +54,31 @@ export const dashboardQuery = queryOptions({
   queryKey: ["admin-dashboard"],
   queryFn: () => getDashboardStats(),
 });
+
+export const mediaLibraryQuery = (q?: string) =>
+  queryOptions({
+    queryKey: ["media", q ?? ""],
+    queryFn: () => listMedia({ data: q ? { q } : {} }),
+  });
+
+export const tagsQuery = queryOptions({
+  queryKey: ["tags"],
+  queryFn: () => listTags(),
+});
+
+export const staffQuery = queryOptions({
+  queryKey: ["staff"],
+  queryFn: () => listStaff(),
+});
+
+export const storyTagsQuery = (id: string) =>
+  queryOptions({
+    queryKey: ["story-tags", id],
+    queryFn: () => getStoryTags({ data: { id } }),
+  });
+
+export const tagStoriesQuery = (slug: string) =>
+  queryOptions({
+    queryKey: ["tag-stories", slug],
+    queryFn: () => getStoriesByTag({ data: { slug } }),
+  });
