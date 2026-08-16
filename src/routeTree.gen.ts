@@ -17,6 +17,7 @@ import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as StorySlugRouteImport } from './routes/story.$slug'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminDashboardRouteImport } from './routes/_authenticated/admin.dashboard'
+import { Route as AuthenticatedAdminMediaRouteImport } from './routes/_authenticated/admin.media'
 import { Route as AuthenticatedAdminReviewRouteImport } from './routes/_authenticated/admin.review'
 import { Route as AuthenticatedAdminStoriesIndexRouteImport } from './routes/_authenticated/admin.stories.index'
 import { Route as AuthenticatedAdminStoriesNewRouteImport } from './routes/_authenticated/admin.stories.new'
@@ -63,6 +64,11 @@ const AuthenticatedAdminDashboardRoute =
     path: '/dashboard',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminMediaRoute = AuthenticatedAdminMediaRouteImport.update({
+  id: '/media',
+  path: '/media',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 const AuthenticatedAdminReviewRoute =
   AuthenticatedAdminReviewRouteImport.update({
     id: '/review',
@@ -100,6 +106,7 @@ export interface FileRoutesByFullPath {
   '/category/$slug': typeof CategorySlugRoute
   '/story/$slug': typeof StorySlugRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
+  '/admin/media': typeof AuthenticatedAdminMediaRoute
   '/admin/review': typeof AuthenticatedAdminReviewRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/stories/new': typeof AuthenticatedAdminStoriesNewRoute
@@ -113,6 +120,7 @@ export interface FileRoutesByTo {
   '/category/$slug': typeof CategorySlugRoute
   '/story/$slug': typeof StorySlugRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
+  '/admin/media': typeof AuthenticatedAdminMediaRoute
   '/admin/review': typeof AuthenticatedAdminReviewRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/stories/new': typeof AuthenticatedAdminStoriesNewRoute
@@ -129,6 +137,7 @@ export interface FileRoutesById {
   '/category/$slug': typeof CategorySlugRoute
   '/story/$slug': typeof StorySlugRoute
   '/_authenticated/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
+  '/_authenticated/admin/media': typeof AuthenticatedAdminMediaRoute
   '/_authenticated/admin/review': typeof AuthenticatedAdminReviewRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/stories/new': typeof AuthenticatedAdminStoriesNewRoute
@@ -145,6 +154,7 @@ export interface FileRouteTypes {
     | '/category/$slug'
     | '/story/$slug'
     | '/admin/dashboard'
+    | '/admin/media'
     | '/admin/review'
     | '/admin/'
     | '/admin/stories/new'
@@ -158,6 +168,7 @@ export interface FileRouteTypes {
     | '/category/$slug'
     | '/story/$slug'
     | '/admin/dashboard'
+    | '/admin/media'
     | '/admin/review'
     | '/admin'
     | '/admin/stories/new'
@@ -173,6 +184,7 @@ export interface FileRouteTypes {
     | '/category/$slug'
     | '/story/$slug'
     | '/_authenticated/admin/dashboard'
+    | '/_authenticated/admin/media'
     | '/_authenticated/admin/review'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/stories/new'
@@ -248,6 +260,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminDashboardRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/media': {
+      id: '/_authenticated/admin/media'
+      path: '/media'
+      fullPath: '/admin/media'
+      preLoaderRoute: typeof AuthenticatedAdminMediaRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/review': {
       id: '/_authenticated/admin/review'
       path: '/review'
@@ -288,6 +307,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminDashboardRoute: typeof AuthenticatedAdminDashboardRoute
+  AuthenticatedAdminMediaRoute: typeof AuthenticatedAdminMediaRoute
   AuthenticatedAdminReviewRoute: typeof AuthenticatedAdminReviewRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminStoriesNewRoute: typeof AuthenticatedAdminStoriesNewRoute
@@ -297,6 +317,7 @@ interface AuthenticatedAdminRouteChildren {
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminDashboardRoute: AuthenticatedAdminDashboardRoute,
+  AuthenticatedAdminMediaRoute: AuthenticatedAdminMediaRoute,
   AuthenticatedAdminReviewRoute: AuthenticatedAdminReviewRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   AuthenticatedAdminStoriesNewRoute: AuthenticatedAdminStoriesNewRoute,
