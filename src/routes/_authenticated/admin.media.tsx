@@ -5,7 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { ImagePlus, Loader2, Trash2 } from "lucide-react";
 import { mediaLibraryQuery } from "@/lib/queries";
-import { updateMedia, deleteMedia } from "@/lib/media.functions";
+import { updateMediaMeta, deleteMedia } from "@/lib/media.functions";
 import type { MediaAsset } from "@/lib/media.functions";
 import { uploadImage } from "@/lib/media-upload";
 import { formatDate } from "@/lib/story-types";
@@ -115,7 +115,7 @@ function MediaLibraryPage() {
 
 function MediaDetail({ asset, onClose }: { asset: MediaAsset; onClose: () => void }) {
   const queryClient = useQueryClient();
-  const save = useServerFn(updateMedia);
+  const save = useServerFn(updateMediaMeta);
   const remove = useServerFn(deleteMedia);
   const [alt, setAlt] = useState(asset.alt_text ?? "");
   const [caption, setCaption] = useState(asset.caption ?? "");
