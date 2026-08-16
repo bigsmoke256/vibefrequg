@@ -53,7 +53,13 @@ export const listAdminStories = createServerFn({ method: "GET" })
 
     const { data: rows, error } = await query;
     if (error) throw new Error(error.message);
-    return { stories: (rows ?? []) as unknown as (StoryCardDTO & { status: StoryStatus })[] };
+    return {
+      stories: (rows ?? []) as unknown as (StoryCardDTO & {
+        status: StoryStatus;
+        scheduled_for: string | null;
+        corrected_at: string | null;
+      })[],
+    };
   });
 
 export const getAdminStory = createServerFn({ method: "GET" })
