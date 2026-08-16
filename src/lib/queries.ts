@@ -51,3 +51,31 @@ export const dashboardQuery = queryOptions({
   queryKey: ["admin-dashboard"],
   queryFn: () => getDashboardStats(),
 });
+
+export const mediaLibraryQuery = (q?: string) =>
+  queryOptions({
+    queryKey: ["media", q ?? ""],
+    queryFn: () => listMedia({ data: q ? { q } : {} }),
+  });
+
+export const tagsQuery = queryOptions({
+  queryKey: ["tags"],
+  queryFn: () => listTags(),
+});
+
+export const staffQuery = queryOptions({
+  queryKey: ["staff"],
+  queryFn: () => listStaff(),
+});
+
+export const storyTagsQuery = (id: string) =>
+  queryOptions({
+    queryKey: ["story-tags", id],
+    queryFn: () => getStoryTags({ data: { id } }),
+  });
+
+export const tagStoriesQuery = (slug: string) =>
+  queryOptions({
+    queryKey: ["tag-stories", slug],
+    queryFn: () => getStoriesByTag({ data: { slug } }),
+  });
