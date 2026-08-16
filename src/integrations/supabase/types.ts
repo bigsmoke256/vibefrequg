@@ -83,11 +83,58 @@ export type Database = {
         }
         Relationships: []
       }
+      media_assets: {
+        Row: {
+          alt_text: string | null
+          caption: string | null
+          created_at: string
+          credit: string | null
+          file_name: string
+          id: string
+          mime_type: string
+          size_bytes: number
+          storage_path: string
+          updated_at: string
+          uploaded_by: string | null
+          url: string
+        }
+        Insert: {
+          alt_text?: string | null
+          caption?: string | null
+          created_at?: string
+          credit?: string | null
+          file_name: string
+          id?: string
+          mime_type: string
+          size_bytes?: number
+          storage_path: string
+          updated_at?: string
+          uploaded_by?: string | null
+          url: string
+        }
+        Update: {
+          alt_text?: string | null
+          caption?: string | null
+          created_at?: string
+          credit?: string | null
+          file_name?: string
+          id?: string
+          mime_type?: string
+          size_bytes?: number
+          storage_path?: string
+          updated_at?: string
+          uploaded_by?: string | null
+          url?: string
+        }
+        Relationships: []
+      }
       stories: {
         Row: {
           author_id: string | null
           body: Json
           category_id: string | null
+          corrected_at: string | null
+          correction_note: string | null
           cover_image: string | null
           created_at: string
           created_by: string | null
@@ -113,6 +160,8 @@ export type Database = {
           author_id?: string | null
           body?: Json
           category_id?: string | null
+          corrected_at?: string | null
+          correction_note?: string | null
           cover_image?: string | null
           created_at?: string
           created_by?: string | null
@@ -138,6 +187,8 @@ export type Database = {
           author_id?: string | null
           body?: Json
           category_id?: string | null
+          corrected_at?: string | null
+          correction_note?: string | null
           cover_image?: string | null
           created_at?: string
           created_by?: string | null
@@ -306,6 +357,32 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_list_staff: {
+        Args: never
+        Returns: {
+          author_id: string
+          author_name: string
+          author_slug: string
+          email: string
+          joined_at: string
+          roles: string[]
+          user_id: string
+        }[]
+      }
+      admin_remove_user_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: undefined
+      }
+      admin_set_user_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: undefined
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -314,6 +391,7 @@ export type Database = {
         Returns: boolean
       }
       is_editorial: { Args: { _user_id: string }; Returns: boolean }
+      publish_due_stories: { Args: never; Returns: number }
     }
     Enums: {
       app_role: "admin" | "editor" | "reporter"
