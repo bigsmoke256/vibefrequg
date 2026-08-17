@@ -15,10 +15,12 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as StorySlugRouteImport } from './routes/story.$slug'
+import { Route as TagSlugRouteImport } from './routes/tag.$slug'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminDashboardRouteImport } from './routes/_authenticated/admin.dashboard'
 import { Route as AuthenticatedAdminMediaRouteImport } from './routes/_authenticated/admin.media'
 import { Route as AuthenticatedAdminReviewRouteImport } from './routes/_authenticated/admin.review'
+import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
 import { Route as AuthenticatedAdminStoriesIndexRouteImport } from './routes/_authenticated/admin.stories.index'
 import { Route as AuthenticatedAdminStoriesNewRouteImport } from './routes/_authenticated/admin.stories.new'
 import { Route as ApiPublicMediaSplatRouteImport } from './routes/api/public/media.$'
@@ -53,6 +55,11 @@ const StorySlugRoute = StorySlugRouteImport.update({
   path: '/story/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TagSlugRoute = TagSlugRouteImport.update({
+  id: '/tag/$slug',
+  path: '/tag/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -75,6 +82,11 @@ const AuthenticatedAdminReviewRoute =
     path: '/review',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 const AuthenticatedAdminStoriesIndexRoute =
   AuthenticatedAdminStoriesIndexRouteImport.update({
     id: '/stories/',
@@ -105,9 +117,11 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/category/$slug': typeof CategorySlugRoute
   '/story/$slug': typeof StorySlugRoute
+  '/tag/$slug': typeof TagSlugRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/admin/media': typeof AuthenticatedAdminMediaRoute
   '/admin/review': typeof AuthenticatedAdminReviewRoute
+  '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/stories/new': typeof AuthenticatedAdminStoriesNewRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
@@ -119,9 +133,11 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/category/$slug': typeof CategorySlugRoute
   '/story/$slug': typeof StorySlugRoute
+  '/tag/$slug': typeof TagSlugRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/admin/media': typeof AuthenticatedAdminMediaRoute
   '/admin/review': typeof AuthenticatedAdminReviewRoute
+  '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/stories/new': typeof AuthenticatedAdminStoriesNewRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
@@ -136,9 +152,11 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/category/$slug': typeof CategorySlugRoute
   '/story/$slug': typeof StorySlugRoute
+  '/tag/$slug': typeof TagSlugRoute
   '/_authenticated/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/_authenticated/admin/media': typeof AuthenticatedAdminMediaRoute
   '/_authenticated/admin/review': typeof AuthenticatedAdminReviewRoute
+  '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/stories/new': typeof AuthenticatedAdminStoriesNewRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
@@ -153,9 +171,11 @@ export interface FileRouteTypes {
     | '/admin'
     | '/category/$slug'
     | '/story/$slug'
+    | '/tag/$slug'
     | '/admin/dashboard'
     | '/admin/media'
     | '/admin/review'
+    | '/admin/users'
     | '/admin/'
     | '/admin/stories/new'
     | '/api/public/media/$'
@@ -167,9 +187,11 @@ export interface FileRouteTypes {
     | '/auth'
     | '/category/$slug'
     | '/story/$slug'
+    | '/tag/$slug'
     | '/admin/dashboard'
     | '/admin/media'
     | '/admin/review'
+    | '/admin/users'
     | '/admin'
     | '/admin/stories/new'
     | '/api/public/media/$'
@@ -183,9 +205,11 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/category/$slug'
     | '/story/$slug'
+    | '/tag/$slug'
     | '/_authenticated/admin/dashboard'
     | '/_authenticated/admin/media'
     | '/_authenticated/admin/review'
+    | '/_authenticated/admin/users'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/stories/new'
     | '/api/public/media/$'
@@ -199,6 +223,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   CategorySlugRoute: typeof CategorySlugRoute
   StorySlugRoute: typeof StorySlugRoute
+  TagSlugRoute: typeof TagSlugRoute
   ApiPublicMediaSplatRoute: typeof ApiPublicMediaSplatRoute
 }
 
@@ -246,6 +271,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StorySlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tag/$slug': {
+      id: '/tag/$slug'
+      path: '/tag/$slug'
+      fullPath: '/tag/$slug'
+      preLoaderRoute: typeof TagSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin/': {
       id: '/_authenticated/admin/'
       path: '/'
@@ -272,6 +304,13 @@ declare module '@tanstack/react-router' {
       path: '/review'
       fullPath: '/admin/review'
       preLoaderRoute: typeof AuthenticatedAdminReviewRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/users': {
+      id: '/_authenticated/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/stories/': {
@@ -309,6 +348,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminDashboardRoute: typeof AuthenticatedAdminDashboardRoute
   AuthenticatedAdminMediaRoute: typeof AuthenticatedAdminMediaRoute
   AuthenticatedAdminReviewRoute: typeof AuthenticatedAdminReviewRoute
+  AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminStoriesNewRoute: typeof AuthenticatedAdminStoriesNewRoute
   AuthenticatedAdminStoriesIndexRoute: typeof AuthenticatedAdminStoriesIndexRoute
@@ -319,6 +359,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminDashboardRoute: AuthenticatedAdminDashboardRoute,
   AuthenticatedAdminMediaRoute: AuthenticatedAdminMediaRoute,
   AuthenticatedAdminReviewRoute: AuthenticatedAdminReviewRoute,
+  AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   AuthenticatedAdminStoriesNewRoute: AuthenticatedAdminStoriesNewRoute,
   AuthenticatedAdminStoriesIndexRoute: AuthenticatedAdminStoriesIndexRoute,
@@ -345,6 +386,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   CategorySlugRoute: CategorySlugRoute,
   StorySlugRoute: StorySlugRoute,
+  TagSlugRoute: TagSlugRoute,
   ApiPublicMediaSplatRoute: ApiPublicMediaSplatRoute,
 }
 export const routeTree = rootRouteImport

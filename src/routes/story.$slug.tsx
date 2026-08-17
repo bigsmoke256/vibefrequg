@@ -86,6 +86,12 @@ function StoryPage() {
             className="duotone mt-6 aspect-[16/9] w-full object-cover"
           />
         ) : null}
+        {story.corrected_at ? (
+          <p className="mt-4 border-l-2 border-accent pl-3 text-xs text-muted-foreground">
+            Updated {formatDate(story.corrected_at)}
+            {story.correction_note ? ` — ${story.correction_note}` : ""}
+          </p>
+        ) : null}
         {story.excerpt ? (
           <p className="mt-8 text-lg text-foreground/90">{story.excerpt}</p>
         ) : null}
@@ -109,6 +115,23 @@ function StoryPage() {
             ),
           )}
         </div>
+
+        {(story.tag_links ?? []).some((t) => t.tag) ? (
+          <div className="mt-10 flex flex-wrap gap-2">
+            {(story.tag_links ?? []).map((t) =>
+              t.tag ? (
+                <Link
+                  key={t.tag.slug}
+                  to="/tag/$slug"
+                  params={{ slug: t.tag.slug }}
+                  className="border border-border px-3 py-1.5 text-[10px] font-bold tracking-[0.16em] uppercase hover:border-accent hover:text-accent"
+                >
+                  #{t.tag.name}
+                </Link>
+              ) : null,
+            )}
+          </div>
+        ) : null}
 
         {data.related.length ? (
           <section className="mt-16">
