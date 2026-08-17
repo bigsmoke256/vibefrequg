@@ -116,6 +116,23 @@ function StoryPage() {
           )}
         </div>
 
+        {(story.tag_links ?? []).some((t) => t.tag) ? (
+          <div className="mt-10 flex flex-wrap gap-2">
+            {(story.tag_links ?? []).map((t) =>
+              t.tag ? (
+                <Link
+                  key={t.tag.slug}
+                  to="/tag/$slug"
+                  params={{ slug: t.tag.slug }}
+                  className="border border-border px-3 py-1.5 text-[10px] font-bold tracking-[0.16em] uppercase hover:border-accent hover:text-accent"
+                >
+                  #{t.tag.name}
+                </Link>
+              ) : null,
+            )}
+          </div>
+        ) : null}
+
         {data.related.length ? (
           <section className="mt-16">
             <SectionLabel>More stories</SectionLabel>
