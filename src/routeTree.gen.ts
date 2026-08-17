@@ -15,6 +15,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as StorySlugRouteImport } from './routes/story.$slug'
+import { Route as TagSlugRouteImport } from './routes/tag.$slug'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminDashboardRouteImport } from './routes/_authenticated/admin.dashboard'
 import { Route as AuthenticatedAdminMediaRouteImport } from './routes/_authenticated/admin.media'
@@ -52,6 +53,11 @@ const CategorySlugRoute = CategorySlugRouteImport.update({
 const StorySlugRoute = StorySlugRouteImport.update({
   id: '/story/$slug',
   path: '/story/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TagSlugRoute = TagSlugRouteImport.update({
+  id: '/tag/$slug',
+  path: '/tag/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
@@ -111,6 +117,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/category/$slug': typeof CategorySlugRoute
   '/story/$slug': typeof StorySlugRoute
+  '/tag/$slug': typeof TagSlugRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/admin/media': typeof AuthenticatedAdminMediaRoute
   '/admin/review': typeof AuthenticatedAdminReviewRoute
@@ -126,6 +133,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/category/$slug': typeof CategorySlugRoute
   '/story/$slug': typeof StorySlugRoute
+  '/tag/$slug': typeof TagSlugRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/admin/media': typeof AuthenticatedAdminMediaRoute
   '/admin/review': typeof AuthenticatedAdminReviewRoute
@@ -144,6 +152,7 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/category/$slug': typeof CategorySlugRoute
   '/story/$slug': typeof StorySlugRoute
+  '/tag/$slug': typeof TagSlugRoute
   '/_authenticated/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/_authenticated/admin/media': typeof AuthenticatedAdminMediaRoute
   '/_authenticated/admin/review': typeof AuthenticatedAdminReviewRoute
@@ -162,6 +171,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/category/$slug'
     | '/story/$slug'
+    | '/tag/$slug'
     | '/admin/dashboard'
     | '/admin/media'
     | '/admin/review'
@@ -177,6 +187,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/category/$slug'
     | '/story/$slug'
+    | '/tag/$slug'
     | '/admin/dashboard'
     | '/admin/media'
     | '/admin/review'
@@ -194,6 +205,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/category/$slug'
     | '/story/$slug'
+    | '/tag/$slug'
     | '/_authenticated/admin/dashboard'
     | '/_authenticated/admin/media'
     | '/_authenticated/admin/review'
@@ -211,6 +223,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   CategorySlugRoute: typeof CategorySlugRoute
   StorySlugRoute: typeof StorySlugRoute
+  TagSlugRoute: typeof TagSlugRoute
   ApiPublicMediaSplatRoute: typeof ApiPublicMediaSplatRoute
 }
 
@@ -256,6 +269,13 @@ declare module '@tanstack/react-router' {
       path: '/story/$slug'
       fullPath: '/story/$slug'
       preLoaderRoute: typeof StorySlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tag/$slug': {
+      id: '/tag/$slug'
+      path: '/tag/$slug'
+      fullPath: '/tag/$slug'
+      preLoaderRoute: typeof TagSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin/': {
@@ -366,6 +386,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   CategorySlugRoute: CategorySlugRoute,
   StorySlugRoute: StorySlugRoute,
+  TagSlugRoute: TagSlugRoute,
   ApiPublicMediaSplatRoute: ApiPublicMediaSplatRoute,
 }
 export const routeTree = rootRouteImport

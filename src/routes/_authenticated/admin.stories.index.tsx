@@ -116,7 +116,14 @@ function StoriesList() {
                   {statusLabels[s.status]}
                 </span>
                 <span className="text-xs text-muted-foreground">
-                  {formatDate(s.published_at ?? null)}
+                  {s.status === "scheduled" && s.scheduled_for
+                    ? `Publishes ${new Date(s.scheduled_for).toLocaleString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        hour: "numeric",
+                        minute: "2-digit",
+                      })}`
+                    : formatDate(s.published_at ?? null)}
                 </span>
                 {s.status === "published" ? (
                   <Link

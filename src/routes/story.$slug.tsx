@@ -86,6 +86,12 @@ function StoryPage() {
             className="duotone mt-6 aspect-[16/9] w-full object-cover"
           />
         ) : null}
+        {story.corrected_at ? (
+          <p className="mt-4 border-l-2 border-accent pl-3 text-xs text-muted-foreground">
+            Updated {formatDate(story.corrected_at)}
+            {story.correction_note ? ` — ${story.correction_note}` : ""}
+          </p>
+        ) : null}
         {story.excerpt ? (
           <p className="mt-8 text-lg text-foreground/90">{story.excerpt}</p>
         ) : null}
